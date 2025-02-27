@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class TrackManager : MonoBehaviour
 {
 
     [Space(20)]
-    [SerializeField] Track trackPrefab;
     [SerializeField] PlayerControl playerPrefab;
+    [SerializeField] Track trackRoad;
+    [SerializeField] GameObject trackStart, trackFinish;
+    
     
 
     [Space(20)]
@@ -47,6 +50,8 @@ public class TrackManager : MonoBehaviour
         // 인게임 UI 를 미리 받아온다. 없으면 패스
         uiIngame = FindFirstObjectByType<IngameUI>();
 
+        
+
         // 씬에 존재하는 모든 오브젝트를 가져와라
         //IngameUI[] uis = FindObjectsByType<IngameUI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 
@@ -57,6 +62,7 @@ public class TrackManager : MonoBehaviour
 
 
         SpawnInitialTrack();
+        SpawnStartZone();
         SpawnPlayer();
 
         StartCoroutine(CountdownTrack());
@@ -68,6 +74,7 @@ public class TrackManager : MonoBehaviour
             return;
 
         RepositionTrack();
+        SpawnFinishZone();
         BendTrack();    
 
         GameManager.mileage += scrollSpeed * Time.smoothDeltaTime;    
@@ -93,7 +100,7 @@ public class TrackManager : MonoBehaviour
     Track SpawnNextTrack(Vector3 position, string trackname)
     {
         //첫번째 ExitPoint 에 두번째 EntryPoint 접합
-        Track Next = Instantiate(trackPrefab, position, Quaternion.identity, transform);            
+        Track Next = Instantiate(trackRoad, position, Quaternion.identity, transform);            
         Next.name = trackname;
         Next.trackmgr = this;
         
@@ -103,6 +110,7 @@ public class TrackManager : MonoBehaviour
 
         return Next;
     }
+
     
     
 
@@ -165,6 +173,12 @@ public class TrackManager : MonoBehaviour
     }
 
 
+    public void SetPhase(Phase phase, float duration = 0.5f)
+    {
+        DOVirtual.Float( scrollSpeed, phase.scrollSpeed, duration, s => scrollSpeed = s ).SetEase(Ease.InOutSine);
+    }
+
+
     public void StopScrollTrack()
     {
         scrollSpeed = 0f;
@@ -182,10 +196,8 @@ public class TrackManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
         
-        uiIngame.ShowInfo("GO!", 1.5f);
         GameManager.IsPlaying = true;
     }
-
 
 
 
@@ -196,6 +208,31 @@ public class TrackManager : MonoBehaviour
     {
         PlayerControl player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         player.trackMgr = this;
+    }
+
+    void SpawnStartZone(float zpos = 3f)
+    {
+        // 3m 앞에 트랙이 있는지 판단
+        Track t = GetTrackByZ(zpos);
+        GameObject o = Instantiate(trackStart, t.ObstacleRoot);
+        Vector3 pos = new Vector3(0f, 0f, zpos);
+        o.transform.SetPositionAndRotation(pos, Quaternion.identity);
+    }
+
+    GameObject _finishzone;
+    void SpawnFinishZone(float zpos = 60f)
+    {
+        if (_finishzone != null)
+            return;
+
+        if (GameManager.mileage + zpos < GameManager.mileageFinish) 
+            return;
+
+        // 60m 앞에 트랙이 있는지 판단
+        Track t = GetTrackByZ(zpos);
+        _finishzone = Instantiate(trackFinish, t.ObstacleRoot);
+        Vector3 pos = new Vector3(0f, 0f, zpos);
+        _finishzone.transform.SetPositionAndRotation(pos, Quaternion.identity);
     }
     
 

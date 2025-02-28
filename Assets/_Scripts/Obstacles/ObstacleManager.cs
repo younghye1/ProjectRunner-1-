@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using CustomInspector;
+using DG.Tweening;
 
 
 
@@ -117,4 +118,11 @@ public class ObstacleManager : MonoBehaviour
 
         return (rndLane, prefab);
     }
+
+        public void SetPhase(Phase phase, float duration = 0.5f)
+    {
+        //장애물 interval 적용
+        DOVirtual.Vector2 (spawnInterval,phase.obstacleInterval,duration,i=>spawnInterval=i).SetEase(Ease.InOutSine);
+    }
+
 }

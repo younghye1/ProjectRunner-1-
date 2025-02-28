@@ -17,21 +17,19 @@ public class PhaseManager : MonoBehaviour
 
     private TrackManager trkMgr;
     private IngameUI uiIngame;
-
+private ObstacleManager obsMgr;
 
 
 
     IEnumerator Start()
     {
         trkMgr = FindFirstObjectByType<TrackManager>();
-        yield return new WaitUntil( ()=> trkMgr != null );
-
+        obsMgr = FindFirstObjectByType<ObstacleManager>();
         uiIngame = FindFirstObjectByType<IngameUI>();
-        yield return new WaitUntil( ()=> uiIngame != null );
 
         GetFinishline();
 
-        yield return new WaitUntil( ()=> GameManager.IsPlaying );
+        yield return new WaitUntil(() => GameManager.IsPlaying);
         StartCoroutine(IntervalUpdate());
     }
 
@@ -55,7 +53,7 @@ public class PhaseManager : MonoBehaviour
 
             if (i >= mileageList.Count)
             {
-                GameClear(phase);
+                SetPhase(phase);
                 yield break;
             }
 
@@ -76,12 +74,12 @@ public class PhaseManager : MonoBehaviour
     {
         uiIngame?.ShowInfo(phase.Name);
         trkMgr?.SetPhase(phase);
+        obsMgr?.SetPhase(phase);
     }
 
     void GameClear(Phase phase)
     {
-        uiIngame?.ShowInfo(phase.Name);
-        trkMgr?.SetPhase(phase);
+        SetPhase(phase);
 
         GameManager.IsPlaying = false;
         GameManager.IsGameover = true;

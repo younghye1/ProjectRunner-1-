@@ -14,6 +14,8 @@ public class PhaseManager : MonoBehaviour
 
     [HorizontalLine("Phase 속성"), HideField] public bool _l1;
     [SerializeField] List<Phase> mileageList = new List<Phase>();
+    //mileageList 를 읽기 전용 (쓰기 x)
+    private List<Phase> mileages => mileageList;
 
     private TrackManager trkMgr;
     private IngameUI uiIngame;
@@ -26,6 +28,7 @@ private ObstacleManager obsMgr;
         trkMgr = FindFirstObjectByType<TrackManager>();
         obsMgr = FindFirstObjectByType<ObstacleManager>();
         uiIngame = FindFirstObjectByType<IngameUI>();
+        uiIngame . SetMilegae
 
         GetFinishline();
 
@@ -72,7 +75,7 @@ private ObstacleManager obsMgr;
 
     void SetPhase(Phase phase)
     {
-        uiIngame?.ShowInfo(phase.Name);
+        uiIngame?.SetPhase(phase);
         trkMgr?.SetPhase(phase);
         obsMgr?.SetPhase(phase);
     }

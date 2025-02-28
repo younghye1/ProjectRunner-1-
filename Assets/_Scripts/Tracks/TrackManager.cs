@@ -173,7 +173,7 @@ public class TrackManager : MonoBehaviour
     }
 
 
-    public void SetPhase(Phase phase, float duration = 0.5f)
+    public void SetPhase(PhaseSO phase, float duration = 0.5f)
     {
         DOVirtual.Float( scrollSpeed, phase.scrollSpeed, duration, s => scrollSpeed = s ).SetEase(Ease.InOutSine);
     }

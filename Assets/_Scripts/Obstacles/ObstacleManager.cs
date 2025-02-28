@@ -1,6 +1,6 @@
 
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using CustomInspector;
 using DG.Tweening;
@@ -10,8 +10,7 @@ using DG.Tweening;
 [System.Serializable]
 public class ObstaclePool : RandomItem
 {
-    public List<Obstacle> obstacleList;
-
+  public List<Obstacle> obstacleList;
     public override object GetItem()
     {
         if (obstacleList == null || obstacleList.Count <= 0)
@@ -25,12 +24,10 @@ public class ObstacleManager : MonoBehaviour
 {
 
     [Space(20)]
-    public List<ObstaclePool> obstaclePools;
-
-
-    [Space(20)]
     [SerializeField] float spawnZpos = 60f;
-    [SerializeField, AsRange(0, 100)] Vector2 spawnInterval;
+    [ReadOnly] Vector2 spawnInterval;
+     [SerializeField,ReadOnly] ObstacleSO data;
+
 
 
     private TrackManager trackMgr;
@@ -40,6 +37,7 @@ public class ObstacleManager : MonoBehaviour
     // Coroutine 방식 : Function, Method, Subroutine
     IEnumerator Start()
     {
+ 
         trackMgr = FindFirstObjectByType<TrackManager>();
         if (trackMgr == null)
         {
@@ -47,9 +45,9 @@ public class ObstacleManager : MonoBehaviour
             yield break; // return 과 동일 : 함수 완전 탈출
         }
 
+yield return new WaitUntil(()=>data != null);
+
         // Obstacle Pools 에 있는 모든 값을 랜덤생성기에 등록.
-        foreach( var pool in obstaclePools )
-            randomGenerator.AddItem(pool);
 
 
         //yield return new WaitForEndOfFrame();  // 지연 : 1프레임만 지연
@@ -63,6 +61,8 @@ public class ObstacleManager : MonoBehaviour
     // 장애물 생성 ( lane = 0,1,2 )
     public void SpawnObstacle()
     {
+        if (data==null)
+            return;
         (int lane, Obstacle prefab) = RandomLanePrefab();
         
         // Z 위치
@@ -113,16 +113,27 @@ public class ObstacleManager : MonoBehaviour
         // as Obstacle => RandomItem 을 Obstacle 로 형변환
         Obstacle prefab = randomGenerator.GetRandom().GetItem() as Obstacle;
 
-        if (prefab == null)
-            return (-1, null);
+        if (prefab.obstacleData == null)
+           
+           {
+            ClearObstacles();
+             return ;
+           }
+            data = Phase.obstacleData;
 
-        return (rndLane, prefab);
+randomGenerator.Clear();
+        foreach( ObstaclePool pool in data.pools )
+            randomGenerator.AddItem(pool);
+
+
+        //장애물 interval 적용
+        DOVirtual.Vector2 (spawnInterval,data.interval,duration,i=>spawnInterval=i).SetEase(Ease.InOutSine);
     }
 
-        public void SetPhase(Phase phase, float duration = 0.5f)
+    public void ClearObstacles()
     {
-        //장애물 interval 적용
-        DOVirtual.Vector2 (spawnInterval,phase.obstacleInterval,duration,i=>spawnInterval=i).SetEase(Ease.InOutSine);
+           randomGenerator.Clear();
+            data = null;
     }
 
 }

@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using CustomInspector;
 using MoreMountains.Feedbacks;
-using UnityEngine.UI;
+using System.Collections.Generic;
 
 
 public class IngameUI : MonoBehaviour
@@ -15,9 +16,10 @@ public class IngameUI : MonoBehaviour
 
     [HorizontalLine]
     [SerializeField] TextMeshProUGUI mileageText;
-    [SerializeField] Slider mileageslider;
-    [SerializeField] SliderUI mileagesliderui;
+    [SerializeField] Slider mileageSlider;
+    [SerializeField] SliderUI mileageSliderui;
 
+    
     [HorizontalLine]
     [SerializeField] TextMeshProUGUI tmCoin;
     [SerializeField] TextMeshProUGUI tmLife;
@@ -35,13 +37,17 @@ public class IngameUI : MonoBehaviour
         UpdateLife();
     }
     
-public void SetPhase(Phase phase)
-{
- ShowInfo(phase.Name);
 
+    public void SetMileage(List<PhaseSO> phases)
+    {
+        foreach( var p in phases )
+            mileageSliderui.AddIcon(p.Icon, (float)p.Mileage / GameManager.mileageFinish);
+    }
 
-}
-
+    public void SetPhase(PhaseSO phase)
+    {
+        ShowInfo(phase.Name);
+    }
 
     public void ShowInfo(string info, float duration = 1f)
     {
@@ -57,11 +63,8 @@ public void SetPhase(Phase phase)
         feedbackInformation.PlayFeedbacks();
     }
 
-void SetMileage(List<Phase> Phase) 
-{
-    foreach(var p in phases)
-    mileagesliderui.AddIcon(p.Mileage/ GameManager.mileageFinish);
-}
+
+    
 
     void UpdateMileage()
     {
@@ -79,7 +82,7 @@ void SetMileage(List<Phase> Phase)
             mileageText.text = $"{intpart}<size=80%>{decpart}{unitpart}</size><size=60%>m</size>";
         }
 
-        mileageslider.value = (float)(GameManager.mileage / GameManager.mileageFinish);
+        mileageSlider.value = (float)(GameManager.mileage / GameManager.mileageFinish);
     }
 
     private uint _lastcoins;

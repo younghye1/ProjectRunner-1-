@@ -12,14 +12,13 @@ public class PhaseManager : MonoBehaviour
     [SerializeField] float updateInterval = 1f;
 
 
-    [HorizontalLine("Phase 속성"), HideField] public bool _l1;
-    [SerializeField] List<Phase> mileageList = new List<Phase>();
-    //mileageList 를 읽기 전용 (쓰기 x)
-    private List<Phase> mileages => mileageList;
-
+    [HorizontalLine("Phase Data 속성"), HideField] public bool _l1;
+    [SerializeField, Foldout] List<PhaseSO> phaseList = new List<PhaseSO>();
+    
     private TrackManager trkMgr;
+    private ObstacleManager obsMgr;
     private IngameUI uiIngame;
-private ObstacleManager obsMgr;
+
 
 
 
@@ -28,18 +27,19 @@ private ObstacleManager obsMgr;
         trkMgr = FindFirstObjectByType<TrackManager>();
         obsMgr = FindFirstObjectByType<ObstacleManager>();
         uiIngame = FindFirstObjectByType<IngameUI>();
-        uiIngame . SetMilegae
 
         GetFinishline();
 
-        yield return new WaitUntil(() => GameManager.IsPlaying);
+        uiIngame.SetMileage(phaseList);
+        
+        yield return new WaitUntil( ()=> GameManager.IsPlaying );
         StartCoroutine(IntervalUpdate());
     }
 
 
     IEnumerator IntervalUpdate()
     {
-        if(mileageList == null || mileageList.Count <= 0)
+        if(phaseList == null || phaseList.Count <= 0)
             yield break;
 
 
@@ -47,16 +47,16 @@ private ObstacleManager obsMgr;
 
         while( true )
         {
-            Phase phase = mileageList[i];
+            PhaseSO phase = phaseList[i];
             if (GameManager.mileage >= phase.Mileage)
             {
                 SetPhase(phase);
                 i++;
             }
 
-            if (i >= mileageList.Count)
+            if (i >= phaseList.Count)
             {
-                SetPhase(phase);
+                GameClear(phase);
                 yield break;
             }
 
@@ -66,21 +66,19 @@ private ObstacleManager obsMgr;
 
     void GetFinishline()
     {
-        Phase phaseEnd = mileageList.LastOrDefault();       
-
+        PhaseSO phaseEnd = phaseList.LastOrDefault();
         GameManager.mileageFinish = phaseEnd.Mileage;
     }
 
 
-
-    void SetPhase(Phase phase)
+    void SetPhase(PhaseSO phase)
     {
         uiIngame?.SetPhase(phase);
         trkMgr?.SetPhase(phase);
         obsMgr?.SetPhase(phase);
     }
 
-    void GameClear(Phase phase)
+    void GameClear(PhaseSO phase)
     {
         SetPhase(phase);
 

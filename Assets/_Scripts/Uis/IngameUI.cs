@@ -41,12 +41,12 @@ public class IngameUI : MonoBehaviour
     public void SetMileage(List<PhaseSO> phases)
     {
         foreach( var p in phases )
-            mileageSliderui.AddIcon(p.Icon, (float)p.Mileage / GameManager.mileageFinish);
+            mileageSliderui.AddIcon(p.icon, (float)p.mileage / GameManager.mileageFinish);
     }
 
     public void SetPhase(PhaseSO phase)
     {
-        ShowInfo(phase.Name);
+        ShowInfo(phase.DisplayName);
     }
 
     public void ShowInfo(string info, float duration = 1f)

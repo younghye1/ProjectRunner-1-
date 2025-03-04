@@ -10,13 +10,13 @@ public class TrackManager : MonoBehaviour
     [SerializeField] PlayerControl playerPrefab;
     [SerializeField] Track trackRoad;
     [SerializeField] GameObject trackStart, trackFinish;
-    
-    
+
+
 
     [Space(20)]
-    [Range(0f, 50f)] public float scrollSpeed = 10f;    
-    [Range(1, 100)] public int trackCount = 3;   
-    [Range(1,5)] public int countdown = 3;
+    [Range(0f, 50f)] public float scrollSpeed = 10f;
+    [Range(1, 100)] public int trackCount = 3;
+    [Range(1, 5)] public int countdown = 3;
 
 
     [Space(20)]
@@ -31,7 +31,7 @@ public class TrackManager : MonoBehaviour
 
 
     private List<Track> trackList = new List<Track>(); // 생성한 트랙들 보관 
-    private Transform camTransform;    
+    private Transform camTransform;
     private IngameUI uiIngame;
 
 
@@ -44,13 +44,16 @@ public class TrackManager : MonoBehaviour
 
     void Start()
     {
+        GameManager.IsGameover = true;
+        GameManager.IsPlaying = false;
+
         // 메인 카메라 Transform을 미리 받아온다.
         camTransform = Camera.main.transform;
 
         // 인게임 UI 를 미리 받아온다. 없으면 패스
         uiIngame = FindFirstObjectByType<IngameUI>();
 
-        
+
 
         // 씬에 존재하는 모든 오브젝트를 가져와라
         //IngameUI[] uis = FindObjectsByType<IngameUI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
@@ -66,29 +69,32 @@ public class TrackManager : MonoBehaviour
         SpawnPlayer();
 
         StartCoroutine(CountdownTrack());
+
     }
 
     void Update()
     {
-        if (GameManager.IsPlaying == false)
+        CountdownTrack();
+
+        if (GameManager.IsPlaying == false|| GameManager.IsGameover == true)
             return;
 
         RepositionTrack();
         SpawnFinishZone();
-        BendTrack();    
+        BendTrack();
 
-        GameManager.mileage += scrollSpeed * Time.smoothDeltaTime;    
+        GameManager.mileage += scrollSpeed * Time.smoothDeltaTime;
     }
 
 
-    
+
     // 초기 트랙 생성 ( 한번만 실행 )
     void SpawnInitialTrack()
     {
         // 초기값 = 카메라의 z좌표
-        Vector3 position = new Vector3(0f,0f,camTransform.position.z);
-        for(int i=0; i<trackCount; i++)
-        {            
+        Vector3 position = new Vector3(0f, 0f, camTransform.position.z);
+        for (int i = 0; i < trackCount; i++)
+        {
             //이전 ExitPoint 에 다음 EntryPoint 접합
             Track next = SpawnNextTrack(position, $"Track_{i}");
             position = next.ExitPoint.position;
@@ -100,10 +106,10 @@ public class TrackManager : MonoBehaviour
     Track SpawnNextTrack(Vector3 position, string trackname)
     {
         //첫번째 ExitPoint 에 두번째 EntryPoint 접합
-        Track Next = Instantiate(trackRoad, position, Quaternion.identity, transform);            
+        Track Next = Instantiate(trackRoad, position, Quaternion.identity, transform);
         Next.name = trackname;
         Next.trackmgr = this;
-        
+
         laneList = Next.laneList;
 
         trackList.Add(Next);
@@ -111,8 +117,8 @@ public class TrackManager : MonoBehaviour
         return Next;
     }
 
-    
-    
+
+
 
     // 트랙 재배치
     void RepositionTrack()
@@ -125,7 +131,7 @@ public class TrackManager : MonoBehaviour
         // trackList[trackList.Count-1] => 트랙의 마지막 값 가져오기
         if (trackList[0].ExitPoint.position.z < camTransform.position.z)
         {
-            Track last = trackList[trackList.Count-1];
+            Track last = trackList[trackList.Count - 1];
             SpawnNextTrack(last.ExitPoint.position, trackList[0].name);
 
             Destroy(trackList[0].gameObject);
@@ -147,14 +153,14 @@ public class TrackManager : MonoBehaviour
         // 0.5 -> *2 -1   0
 
         elapsedTime += Time.deltaTime;
-        
-        float rndX = Mathf.PerlinNoise1D(elapsedTime * CurvedFrequencyX) *2f - 1f;
+
+        float rndX = Mathf.PerlinNoise1D(elapsedTime * CurvedFrequencyX) * 2f - 1f;
         rndX = rndX * CurvedAmplitudeX;
-        float rndY = Mathf.PerlinNoise1D(elapsedTime * CurvedFrequencyY) *2f - 1f;
+        float rndY = Mathf.PerlinNoise1D(elapsedTime * CurvedFrequencyY) * 2f - 1f;
         rndY = rndY * CurvedAmplitudeY;
-        
-        foreach( var m in CurvedMaterials )
-            m.SetVector(_curveAmount, new Vector4( rndX, rndY, 0f, 0f ));
+
+        foreach (var m in CurvedMaterials)
+            m.SetVector(_curveAmount, new Vector4(rndX, rndY, 0f, 0f));
     }
 
 
@@ -163,9 +169,9 @@ public class TrackManager : MonoBehaviour
     public Track GetTrackByZ(float z)
     {
         // 해당하는 트랙 찾아서 반환
-        foreach( Track t in trackList )
+        foreach (Track t in trackList)
         {
-            if ( z > t.EntryPoint.position.z && z <= t.ExitPoint.position.z )
+            if (z > t.EntryPoint.position.z && z <= t.ExitPoint.position.z)
                 return t;
         }
 
@@ -175,7 +181,7 @@ public class TrackManager : MonoBehaviour
 
     public void SetPhase(PhaseSO phase, float duration = 0.5f)
     {
-        DOVirtual.Float( scrollSpeed, phase.scrollSpeed, duration, s => scrollSpeed = s ).SetEase(Ease.InOutSine);
+        DOVirtual.Float(scrollSpeed, phase.scrollSpeed, duration, s => scrollSpeed = s).SetEase(Ease.InOutSine);
     }
 
 
@@ -186,54 +192,58 @@ public class TrackManager : MonoBehaviour
 
     private IEnumerator CountdownTrack()
     {
-        yield return new WaitForEndOfFrame();        
-
-        // countdown 으로 반복문 처리하기
-        for ( int i=countdown; i>0; i-- )
+        while (true)
         {
-            uiIngame.ShowInfo($"{i}", 1.5f);
+            yield return new WaitUntil(() => GameManager.IsUiOpened == false);
 
+            uiIngame.ShowInfo($"{countdown--}", 1.5f);
             yield return new WaitForSeconds(1f);
+
+            if (countdown <= 0)
+            {
+
+                GameManager.IsPlaying = true;
+                GameManager.IsGameover = false;
+
+                yield break;
+            }
+
+            yield return new WaitForEndOfFrame();
         }
-        
-        GameManager.IsPlaying = true;
+
     }
 
 
-
-
-
-    // 
     void SpawnPlayer()
-    {
-        PlayerControl player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        player.trackMgr = this;
+        {
+            PlayerControl player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            player.trackMgr = this;
+        }
+
+        void SpawnStartZone(float zpos = 3f)
+        {
+            // 3m 앞에 트랙이 있는지 판단
+            Track t = GetTrackByZ(zpos);
+            GameObject o = Instantiate(trackStart, t.ObstacleRoot);
+            Vector3 pos = new Vector3(0f, 0f, zpos);
+            o.transform.SetPositionAndRotation(pos, Quaternion.identity);
+        }
+
+        GameObject _finishzone;
+        void SpawnFinishZone(float zpos = 60f)
+        {
+            if (_finishzone != null)
+                return;
+
+            if (GameManager.mileage + zpos < GameManager.mileageFinish)
+                return;
+
+            // 60m 앞에 트랙이 있는지 판단
+            Track t = GetTrackByZ(zpos);
+            _finishzone = Instantiate(trackFinish, t.ObstacleRoot);
+            Vector3 pos = new Vector3(0f, 0f, zpos);
+            _finishzone.transform.SetPositionAndRotation(pos, Quaternion.identity);
+        }
+
+
     }
-
-    void SpawnStartZone(float zpos = 3f)
-    {
-        // 3m 앞에 트랙이 있는지 판단
-        Track t = GetTrackByZ(zpos);
-        GameObject o = Instantiate(trackStart, t.ObstacleRoot);
-        Vector3 pos = new Vector3(0f, 0f, zpos);
-        o.transform.SetPositionAndRotation(pos, Quaternion.identity);
-    }
-
-    GameObject _finishzone;
-    void SpawnFinishZone(float zpos = 60f)
-    {
-        if (_finishzone != null)
-            return;
-
-        if (GameManager.mileage + zpos < GameManager.mileageFinish) 
-            return;
-
-        // 60m 앞에 트랙이 있는지 판단
-        Track t = GetTrackByZ(zpos);
-        _finishzone = Instantiate(trackFinish, t.ObstacleRoot);
-        Vector3 pos = new Vector3(0f, 0f, zpos);
-        _finishzone.transform.SetPositionAndRotation(pos, Quaternion.identity);
-    }
-    
-
-}

@@ -16,4 +16,6 @@ public class PopupUIModal : MonoBehaviour
     (
         
        uf* (quit.activeSelf)
-    )}
+    )
+
+    }

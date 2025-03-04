@@ -32,7 +32,7 @@ public class PhaseManager : MonoBehaviour
 
         uiIngame.SetMileage(phaseList);
         
-        yield return new WaitUntil( ()=> GameManager.IsPlaying );
+        yield return new WaitUntil( ()=> GameManager.IsPlaying);
         StartCoroutine(IntervalUpdate());
     }
 

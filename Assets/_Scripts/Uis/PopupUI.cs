@@ -1,54 +1,58 @@
-using JetBrains.Annotations;
-using MoreMountains.Feedbacks;
-using UnityEditor;
 using UnityEngine;
+using MoreMountains.Feedbacks;
 
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 
 public class PopupUI : MonoBehaviour
 {
     [SerializeField] GameObject quit;
-    [SerializeField] MMF_Plyer quit;
+    [SerializeField] MMF_Player quitOpen;
+    [SerializeField] MMF_Player quitClose;
+
+
     void Awake()
-//    {
-     DontDestroyOnLoad(gameObject);
-    dimmerUi.SetActive(false);
-          
+    {        
+        quit.SetActive(false);
     }
-//   void Start()
-{
-}
 
-void Update()
-{
-    if (Input.GetButtonDown("Escape"))
-    else
-            {
-                if (quit.activeself)
-                    quitQpen.PlayFeedbacks();
-            }
-
-public void QuitOk()
-{
-#if UNITY_EDITOR
-    EditorApplication.ExitPlaymode
-#elif
-    EditorApplication.Exit(0);///에디터 모드 Qout 작용
-    else//빌드 후 런타임 에서 작동 (PC, MOBile,)
-    Application.Quit();
-}
-
-    public void QuitCancel()
+    void Update()
     {
-        quitClose?.playFeedbacks();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {   
+            if(quit.activeSelf)
+                QuitClose();
+            else
+                QuitOpen();         
+        }            
     }
-   
-public void QuitOpen()
-{
-    quitOpen?. PlayFeedbacks();
-    GameManager.IsPlaying
+
+
+    public void QuitOk()
+    { 
+#if UNITY_EDITOR
+        // 에디터 모드 Quit 작동
+        EditorApplication.ExitPlaymode();
+#else 
+        // 빌드 후 런타임 에서 작동 ( PC , Mobile , Console , Web ... )
+        Application.Quit();
+#endif
+    }
+
+    public void QuitOpen()
+    {
+        quitOpen?.PlayFeedbacks();
+        GameManager.IsPlaying = false;
+        GameManager.IsUiOpened = true;
+    }
+
+    public void QuitClose()
+    {
+        quitClose?.PlayFeedbacks();
+        GameManager.IsPlaying = true;
+        GameManager.IsUiOpened = false;
+    }
+
 }
-
-    }
-

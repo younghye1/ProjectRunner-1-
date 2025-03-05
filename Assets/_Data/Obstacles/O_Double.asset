@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bfd7de3fb901d4418c10fe6b5a6034d, type: 3}
-  m_Name: Obstacles2
+  m_Name: O_Double
   m_EditorClassIdentifier: 
-  Name: 
-  Icon: {fileID: 0}
-  Mileage: 0
+  DisplayName: 
+  icon: {fileID: 0}
+  mileage: 0
   scrollSpeed: 0
-  obstacleInterval: {x: 0, y: 0}
+  obstacleData: {fileID: 0}
+  collectableData: {fileID: 11400000, guid: 121f8ad6d14da7446a67686e029742e8, type: 2}

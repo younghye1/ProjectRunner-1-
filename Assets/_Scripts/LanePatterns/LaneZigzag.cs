@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class LaneZigzag : Lane
 {
-    public string Name => "ZigzagPattern";
+    public LaneType laneType => LaneType.ZIGZAG;
 
     private LaneData data;
 

@@ -17,6 +17,7 @@ public class PhaseManager : MonoBehaviour
     
     private TrackManager trkMgr;
     private ObstacleManager obsMgr;
+    private CollectableManager colMgr;
     private IngameUI uiIngame;
 
 
@@ -26,13 +27,14 @@ public class PhaseManager : MonoBehaviour
     {
         trkMgr = FindFirstObjectByType<TrackManager>();
         obsMgr = FindFirstObjectByType<ObstacleManager>();
+        colMgr = FindFirstObjectByType<CollectableManager>();
         uiIngame = FindFirstObjectByType<IngameUI>();
 
         GetFinishline();
 
         uiIngame.SetMileage(phaseList);
         
-        yield return new WaitUntil( ()=> GameManager.IsPlaying);
+        yield return new WaitUntil( ()=> GameManager.IsGameover == false && GameManager.IsPlaying == true);
         StartCoroutine(IntervalUpdate());
     }
 
@@ -76,6 +78,7 @@ public class PhaseManager : MonoBehaviour
         uiIngame?.SetPhase(phase);
         trkMgr?.SetPhase(phase);
         obsMgr?.SetPhase(phase);
+        colMgr?.SetPhase(phase);
     }
 
     void GameClear(PhaseSO phase)

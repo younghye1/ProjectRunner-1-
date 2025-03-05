@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bfd7de3fb901d4418c10fe6b5a6034d, type: 3}
   m_Name: Phase1
   m_EditorClassIdentifier: 
-  Name: 
-  Icon: {fileID: 21300000, guid: 20fcc7f0bf8db4b76881e98a8a42c63c, type: 3}
-  Mileage: 0
-  scrollSpeed: 0
-  obstacleInterval: {x: 0, y: 0}
+  DisplayName: "\uCD9C\uBC1C~"
+  icon: {fileID: 21300000, guid: 20fcc7f0bf8db4b76881e98a8a42c63c, type: 3}
+  mileage: 0
+  scrollSpeed: 15
+  obstacleData: {fileID: 0}
+  collectableData: {fileID: 11400000, guid: 121f8ad6d14da7446a67686e029742e8, type: 2}

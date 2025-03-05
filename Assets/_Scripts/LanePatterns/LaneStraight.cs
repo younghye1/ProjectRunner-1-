@@ -2,7 +2,7 @@
 
 public class LaneStraight : Lane
 {
-    public string Name => "StraightPattern";
+    public LaneType laneType => LaneType.STRAIGHT;
     
     private LaneData data;
     

@@ -14,8 +14,9 @@ public class PhaseSO : ScriptableObject
 
     public float scrollSpeed;
 
-//장애물 (Obstacle) 설정
-    [AsRange(0, 100)] public Vector2 obstacleInterval;
-    [Foldout]public ObstacleSO obstacleData;
+    //장애물 (Obstacle) 설정
+    [Foldout] public ObstacleSO obstacleData;
 
+    //아이템 설정- 코인 등...
+    [Foldout] public CollectableSO collectableData;
 }

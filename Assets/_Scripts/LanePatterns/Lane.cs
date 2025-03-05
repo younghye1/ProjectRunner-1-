@@ -4,9 +4,13 @@
 // abstract 변수 선언 (가능)
 // interface 변수 선언 (불가능)
 // interface 는 생성자(Construct) (불가능)
+
+
+public enum LaneType{ EMPTY, STRAIGHT, WAVE, ZIGZAG}
+
 public interface Lane
 {
-    public string Name { get; }
+    public LaneType laneType { get; }
 
     // 초기화 함수
     public void Initialize(int maxlane);

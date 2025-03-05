@@ -538,9 +538,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35b46866541ca944b0359014f309f51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quit: {fileID: 0}
-  quitOpen: {fileID: 0}
-  quitClose: {fileID: 0}
+  quit: {fileID: 510552695572783168}
+  quitOpen: {fileID: 5760598054085592591}
+  quitClose: {fileID: 4470821205034809596}
 --- !u!114 &7954856669688582740
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,21 +8,37 @@ public static class GameManager
 {
     // 전역 변수
     public static bool IsPlaying = false;
-    public static bool IsGameover = false;
+    public static bool IsGameover = true;
     public static bool IsUiOpened = false;
 
-    // 이동 거리
-    public static double mileage; //누적거리
-        public static uint mileageFinish; //누적거리
-
+    
+    public static double mileage; //누적 거리
+    public static uint mileageFinish; // Finish 거리
 
     // 획득 코인 (int -21억 ~ 21억 : 4byte , unit 0 ~ 42억 : 4byte )
     public static uint coins;
 
-    // 
     public static int life = 3;
 
-    public static 
+
+    // 플레이어 상태 플래그
+    public static PlayerState playerstate;
+
+
+    public static void Reset()
+    {
+        IsPlaying = false;
+        IsGameover = true;
+        IsUiOpened = false;
+
+        mileage = 0;
+        mileageFinish = 0;
+        coins = 0;
+        life = 3;
+        
+        playerstate = 0;
+    }
+
 }
 
 

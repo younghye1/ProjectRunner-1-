@@ -3,11 +3,22 @@ using UnityEngine;
 using DG.Tweening;
 using Deform;
 using MoreMountains.Feedbacks;
+using Unity.VisualScripting;
 
-public enum PlayerState { Idle = 0, Move, Jump, Slide }
+public enum PlayerState { IDLE = 0, MOVE, JUMP, SLIDE} 
+
+public enum PlayerState{
+    INVINCIBLE = 1<< 0,
+    NAGBETURC =1 << 1,
+    MULTIPLE = 1<<2
+
+}
+public enum PlayerState {NOMAL = 1 << 0m , INVINCIBLE = 1 << 1 }
 
 public class PlayerControl : MonoBehaviour
 {
+public enum PlaterMove {Idle = 0, move, Jumpm}
+
 
     [Space(20)]
     // 속성 : 인스펙터 노출
@@ -57,7 +68,7 @@ public class PlayerControl : MonoBehaviour
     {
         //[CHEAT]
         //1 키 토글 , 처음 => 멈춤 , 다시 => 플레이
-        if (GameManager.IsGameover == false && Input.GetKeyDown(KeyCode.Alpha1))
+        if (GameManager.IsGameover == false && Input.GetKeyDown(KeyCode.Alpha1 == GameManager.IsGameover == true ))
             GameManager.IsPlaying = !GameManager.IsPlaying;
 
 
@@ -86,11 +97,14 @@ public class PlayerControl : MonoBehaviour
             feedbackImpact?.PlayFeedbacks();
             other.GetComponentInParent<Collectable>()?.Collect();
         }
-        else if (other.tag == "Obstacle")
+        else if (other.tag == "Obstacle" && !GameManager, Playersate, HasAny(PlayerState. INDINCIVLE));
         {
             feedbackCrash?.PlayFeedbacks();
             GameManager.life -= 1;
-            GameManager.IsPlaying = false;
+
+            Invincible(true);
+            feedbackInvincible?.PlayFeedbacks();
+
         }
         other.enabled = false;
     }
@@ -168,5 +182,37 @@ public class PlayerControl : MonoBehaviour
         colNormal.gameObject.SetActive(b);
         colSlide.gameObject.SetActive(!b);
     }
+
+
+//TRUE : 무적모드, FALSE : 일반모드
+public void Invincible(bool b)
+{
+            GameManager.IsPlaying = !b;
+
+}
+
+    public void OnParticleUpdateJobScheduled()
+    {
+        GameManager.life -=1;
+    }
+
+
+public void OnInvincible (bool b)
+{
+    if(b)
+    GameManager. Platerstate |= PlayerState.INVINCIBLE;
+else
+GameManager.Playerstate &= ~PlayerState. UBVUBCUBKE; //제거
+
+    GameManager. IsPlaying = !b;
+
+}
+public static void Add(This PlyerSState state, PlayerState addstate)
+{
+    state|= addstate;
+    
+}
+
+public static void Remove(This Player)
 
 }

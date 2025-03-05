@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using CustomInspector;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 
 public class PhaseManager : MonoBehaviour
@@ -55,13 +57,6 @@ public class PhaseManager : MonoBehaviour
                 SetPhase(phase);
                 i++;
             }
-
-            if (i >= phaseList.Count)
-            {
-                GameClear(phase);
-                yield break;
-            }
-
             yield return new WaitForSeconds(updateInterval);
         }
     }
@@ -88,5 +83,12 @@ public class PhaseManager : MonoBehaviour
         GameManager.IsPlaying = false;
         GameManager.IsGameover = true;
     }
+
+private int lastLife;
+void UpdateLife()
+{
+    if (lastList == GameManager.life)
+    tmlife.Text = GameManager.life.ToString
+}
 
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bfd7de3fb901d4418c10fe6b5a6034d, type: 3}
   m_Name: Phase3
   m_EditorClassIdentifier: 
-  DisplayName: 
+  DisplayName: 3
   icon: {fileID: 21300000, guid: 817e572d8239f4a75a84952defabc914, type: 3}
   mileage: 100
   scrollSpeed: 20
